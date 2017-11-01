@@ -14,7 +14,7 @@ class Agent(object):
         self.learn_op = self._get_learn_op()
 
     def _build_variable(self):
-        self.temperature = tf.Variable(0.5,name="temperature",trainable=False)
+        self.temperature = tf.placeholder('float')
         for l in range(self.depth):
             self.layers[l] = Dense(input_dim=self.arch[l],output_dim=self.arch[l+1],activation=self.act[l],name='fc_%d'%l)
 

@@ -18,11 +18,14 @@ class MNIST_Env(object):
         return self.current_batch_x
 
     def get_ans(self):
-        return self.current_batch_y    
+        return self.current_batch_y
+
+    def get_iter_per_epoch(self):
+        return int(self.mnist.train.num_examples/self.batch_size)    
 
     def get_reward_op(self):
         self.agent_action = tf.placeholder(shape = [None,10],dtype = 'int32')
         self.correct_ans = tf.placeholder(shape = [None,10],dtype = 'int32')
         correct_prediction = tf.equal(tf.argmax(self.agent_action, 1), tf.argmax(self.correct_ans, 1))
-        reward = tf.reduce_sum(tf.cast(correct_prediction, "float"))
+        reward = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         return reward
