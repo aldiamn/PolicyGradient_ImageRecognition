@@ -25,11 +25,14 @@ class Agent(object):
             self.logits[l] = self.layers[l](self.logits[l-1])
         gumble_softmax = tf.contrib.distributions.RelaxedOneHotCategorical
         act = gumble_softmax(self.temperature,logits = self.logits[-1])
-        return act.sample()
+        #act = tf.nn.softmax(self.logits[-1])
+        act_sample = act.sample()
+        action = tf.argmax(act_sample,1)
+        return action
 
     def _get_learn_op(self):
         self.reward = tf.placeholder('float')
-        self.act_played = tf.placeholder('float',[None,10])
-        self.loss = tf.nn.softmax_cross_entropy_with_logits(labels=self.act_played,logits=self.logits[-1])*self.reward
+        self.act_played = tf.placeholder('int32',[None])
+        self.loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.act_played,logits=self.logits[-1])*self.reward
         opt = tf.train.AdamOptimizer()
         return opt.minimize(self.loss)
