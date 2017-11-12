@@ -28,4 +28,5 @@ class MNIST_Env(object):
         self.correct_ans = tf.placeholder(shape = [None,10],dtype = 'int32')
         correct_prediction = tf.equal(self.agent_action, tf.cast(tf.argmax(self.correct_ans, 1),'int32'))
         reward = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+        reward = 2*(reward-0.5)
         return reward

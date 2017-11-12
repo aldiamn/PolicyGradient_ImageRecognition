@@ -5,11 +5,12 @@ from core.agent import Agent
 epoch = 100
 batch_size = 1
 temperature = 1.0
-display_epoch = 10
+tmp_decay_epoch = 10
+display_epoch = 1
 
 env = MNIST_Env(batch_size=batch_size)
 architecture = [28*28,100,100,10]
-activation = [tf.nn.relu,tf.nn.relu,None]
+activation = [tf.nn.sigmoid,tf.nn.sigmoid,None]
 chris = Agent(architecture=architecture,activations=activation)
 reward_op = env.get_reward_op()
 init = tf.global_variables_initializer()
@@ -29,9 +30,9 @@ with tf.Session() as sess:
                                                    chris.observation:obv,
                                                    chris.temperature:temperature})
             reward_avg += reward
-            #print(action)
         reward_avg = reward_avg/episode
-        if (ep+1)%display_epoch == 0:
+        if (ep+1)%tmp_decay_epoch == 0:
             temperature=temperature*0.8
+        if (ep+1)%display_epoch == 0:
             print('Epoch:%04d, reward:%.3f'%(ep+1,reward_avg))
         
