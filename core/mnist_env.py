@@ -6,6 +6,7 @@ Created on Sat Sep 30 10:44:21 2017
 """
 
 import tensorflow as tf
+import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
 
 class MNIST_Env(object):
@@ -30,3 +31,18 @@ class MNIST_Env(object):
         reward = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         reward = 2*(reward-0.5)
         return reward
+
+    def generate_reward(self,agent_action):
+        correct_prediction = np.equal(agent_action,np.argmax(self.current_batch_y,axis=1)).astype(float)
+        reward = np.mean(correct_prediction,axis=0)
+        reward = 2*(reward-0.5)
+        return reward
+
+    def generate_accuracy(self,agent_action):
+        correct_prediction = np.equal(agent_action,np.argmax(self.current_batch_y,axis=1)).astype(float)
+        acc = np.mean(correct_prediction,axis=0)
+        return acc
+
+    def get_test_observation(self):
+        self.current_batch_x, self.current_batch_y = self.mnist.test.images, self.mnist.test.labels
+        return self.current_batch_x
